@@ -1,7 +1,10 @@
 package ru.practicum.shareit.user;
 
-public class UserMapper {
-    public UserDto mapToUserDto(User user) {
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    public static UserDto mapToUserDto(User user) {
         UserDto dto = new UserDto();
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());
@@ -10,7 +13,7 @@ public class UserMapper {
         return dto;
     }
 
-    public User mapToUser(UserDto dto) {
+    public static User mapToUser(UserDto dto) {
         User user = new User();
         user.setId(dto.getId());
         user.setName(dto.getName());

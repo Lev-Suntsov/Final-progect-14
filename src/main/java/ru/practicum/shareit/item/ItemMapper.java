@@ -1,7 +1,10 @@
 package ru.practicum.shareit.item;
 
-public class ItemMapper {
-    public ItemDto mapToItemDto(Item item) {
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface ItemMapper {
+    static ItemDto mapToItemDto(Item item) {
         ItemDto dto = new ItemDto();
         dto.setId(item.getId());
         dto.setUserId(item.getUserId());
@@ -11,7 +14,7 @@ public class ItemMapper {
         return dto;
     }
 
-    public Item mapToItem(ItemDto dto) {
+    static Item mapToItem(ItemDto dto) {
         Item item = new Item();
         item.setId(dto.getId());
         item.setAvailable(dto.getAvailable());
