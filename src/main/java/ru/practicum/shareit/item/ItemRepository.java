@@ -12,8 +12,10 @@ public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredi
 
     void deleteByUserIdAndId(long userId, long itemId);
 
-    @Query(" select i from Item i " +
-            "where upper(i.name) like upper(concat('%', ?1, '%')) " +
-            " or upper(i.description) like upper(concat('%', ?1, '%'))")
+    @Query("select i from Item i " +
+            "where i.available = true and (" +
+            "upper(i.name) like upper(concat('%', ?1, '%')) " +
+            "or upper(i.description) like upper(concat('%', ?1, '%')))")
     List<Item> search(String text);
+    List<Item> findAllByUserIdOrderByIdAsc(Long ownerId);
 }

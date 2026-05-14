@@ -3,6 +3,9 @@ package ru.practicum.shareit.item;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "items")
@@ -11,7 +14,7 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column()
+    @Column(name = "userid")
     private Long userId;
 
     @Column(name = "name", nullable = false)
@@ -23,8 +26,11 @@ public class Item {
     @Column(name = "available")
     private Boolean available;
 
-    @Column(name = "uri", nullable = false)
+    @Column(name = "url")
     private String url;
+
+    @OneToMany(mappedBy = "item")
+    private List<Comment> comments = new ArrayList<>();;
 
     public boolean isAvailable() {
         return available != null && available;

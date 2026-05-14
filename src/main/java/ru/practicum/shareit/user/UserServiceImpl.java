@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @Override
@@ -42,7 +42,8 @@ class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findUserById(Long userId) {
-        return UserMapper.mapToUserDto(repository.findUserById(userId));
+        User user = repository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        return UserMapper.mapToUserDto(user);
     }
 
     @Override
