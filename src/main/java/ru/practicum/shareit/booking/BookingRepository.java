@@ -111,6 +111,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
             BookingStatus status,
             Timestamp now
     );
+
     Optional<Booking> findFirstByItemIdAndStartBeforeOrderByStartDesc(
             Long itemId,
             Timestamp now

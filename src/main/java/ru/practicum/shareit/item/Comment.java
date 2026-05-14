@@ -31,8 +31,4 @@ public class Comment {
 
     @Column
     private Timestamp created;
-
-    public Item getItem(){
-        return item;
-    }
 }

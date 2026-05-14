@@ -17,5 +17,6 @@ public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredi
             "upper(i.name) like upper(concat('%', ?1, '%')) " +
             "or upper(i.description) like upper(concat('%', ?1, '%')))")
     List<Item> search(String text);
+
     List<Item> findAllByUserIdOrderByIdAsc(Long ownerId);
 }

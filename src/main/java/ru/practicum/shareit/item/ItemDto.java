@@ -20,6 +20,7 @@ public class ItemDto {
     private BookingDtoOut lastBooking;
     private BookingDtoOut nextBooking;
     private List<CommentDto> comments = new ArrayList<>();
+
     public boolean isAvailable() {
         return available != null && !available;
     }

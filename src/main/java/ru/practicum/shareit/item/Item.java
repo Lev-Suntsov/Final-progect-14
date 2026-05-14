@@ -30,7 +30,7 @@ public class Item {
     private String url;
 
     @OneToMany(mappedBy = "item")
-    private List<Comment> comments = new ArrayList<>();;
+    private List<Comment> comments = new ArrayList<>();
 
     public boolean isAvailable() {
         return available != null && available;
