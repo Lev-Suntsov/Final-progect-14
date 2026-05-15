@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.mapstruct.Mapper;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
@@ -7,6 +9,7 @@ import ru.practicum.shareit.item.ItemDto;
 import ru.practicum.shareit.user.UserDto;
 
 @Mapper(componentModel = "spring")
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingMapper {
 
     public static BookingDtoIn toDto(Booking booking) {
