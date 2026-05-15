@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ItemService {
 
@@ -19,4 +20,6 @@ public interface ItemService {
     List<CommentDto> getItemById(Long userId, Long itemId);
 
     List<ItemDto> getAllItemsByOwner(Long ownerId);
+
+    List<ItemDto> findAllByIds(Set<Long> ids);
 }

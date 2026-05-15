@@ -1,4 +1,4 @@
-package ru.practicum.shareit.Exeption;
+package ru.practicum.shareit.Exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

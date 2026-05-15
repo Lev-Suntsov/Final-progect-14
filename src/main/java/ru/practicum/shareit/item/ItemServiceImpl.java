@@ -3,7 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.Exeption.NotFoundException;
+import ru.practicum.shareit.Exception.NotFoundException;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +52,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.mapToItemDto(repository.save(item));
     }
 
+    @Transactional
     @Override
     public void deleteItem(long userId, long itemId) {
         repository.deleteByUserIdAndId(userId, itemId);
@@ -220,5 +222,10 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(CommentMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public List<ItemDto> findAllByIds(Set<Long> ids){
+        return  repository.findAllById(ids).stream().map(ItemMapper::mapToItemDto).toList();
     }
 }

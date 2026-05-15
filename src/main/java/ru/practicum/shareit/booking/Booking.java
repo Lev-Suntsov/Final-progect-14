@@ -1,7 +1,8 @@
 package ru.practicum.shareit.booking;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 
@@ -9,8 +10,9 @@ import java.sql.Timestamp;
  * TODO Sprint add-bookings.
  */
 @Entity
-@Data
 @Table(name = "bookings")
+@Getter
+@Setter
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +34,5 @@ public class Booking {
 
     @Column(name = "booker_id", nullable = false)
     private Long bookerId;
+
 }

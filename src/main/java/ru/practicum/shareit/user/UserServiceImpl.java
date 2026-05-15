@@ -3,7 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.Exeption.NotFoundException;
+import ru.practicum.shareit.Exception.NotFoundException;
 
 import java.util.List;
 
@@ -55,4 +55,8 @@ public class UserServiceImpl implements UserService {
         repository.delete(repository.findUserById(userId));
     }
 
+    @Override
+    public List<UserDto> findAllById(List<Long> ids){
+        return repository.findAllById(ids).stream().map(UserMapper::mapToUserDto).toList();
+    }
 }
