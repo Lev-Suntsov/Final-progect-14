@@ -85,6 +85,7 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Бронирование уже подтверждено");
         }
         booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
+        item.setAvailable(true);
         Booking saved = repository.save(booking);
 
         return BookingMapper.toDtoForOut(
@@ -108,11 +109,12 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = switch (state) {
             case ALL -> repository.findAllByBookerId(userId);
             case CURRENT -> repository.findCurrentByBookerId(userId, now);
-            case PAST -> repository.findPastByBookerId(userId, now);
+            case PAST ->  repository.findPastByBookerId(userId, now);
             case FUTURE -> repository.findFutureByBookerId(userId, now);
             case WAITING -> repository.findByBookerIdAndStatus(userId, BookingStatus.WAITING);
             case REJECTED ->  repository.findByBookerIdAndStatus(userId, BookingStatus.REJECTED);
         };
+
 
         Set<Long> itemIds = new HashSet<>();
         Set<Long> userIds = new HashSet<>();

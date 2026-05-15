@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.Exception.NotFoundException;
+import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -14,10 +15,7 @@ import ru.practicum.shareit.user.UserServiceImpl;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -176,7 +174,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public CommentDto addComment(Long userId, Long itemId, CommentDto comment) {
+    public ItemDto addComment(Long userId, Long itemId, CommentDto comment) {
         if (itemId == null) {
             throw new IllegalArgumentException("id вещи не может быть пустым");
         }
@@ -191,25 +189,24 @@ public class ItemServiceImpl implements ItemService {
 
         Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 
-        boolean hasBooking = bookingRepository
-                .existsByItemIdAndBookerIdAndStatusAndEndBefore(
-                        itemId,
-                        userId,
-                        BookingStatus.APPROVED,
-                        now
-                );
-
-        if (!hasBooking) {
-            throw new IllegalArgumentException(
-                    "Пользователь не арендовал вещь или аренда ещё не завершена"
-            );
+        List<Booking> bookings = bookingRepository.findPastByBookerId(userId, now);
+        Set<Long> itemIds = new HashSet<>();
+        for (Booking booking: bookings){
+            itemIds.add(booking.getItemId());
         }
+
+        for (Long i: itemIds){
+            if(i.equals(comment.getItem().getId()) && comment.getItem().isAvailable()) {
+                throw new IllegalArgumentException(
+                        "Пользователь не арендовал вещь или аренда ещё не завершена");
+            }
+        }
+
 
         comment.setItem(item);
         comment.setAuthor(UserMapper.mapToUser(userDto));
         comment.setCreated(now);
-
-        return CommentMapper.toDto(commentRepository.save(CommentMapper.toEntity(comment)));
+        return ItemMapper.mapToItemDto(item);
     }
 
     @Override
