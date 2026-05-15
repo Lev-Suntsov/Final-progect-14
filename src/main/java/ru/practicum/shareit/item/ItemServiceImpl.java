@@ -191,12 +191,12 @@ public class ItemServiceImpl implements ItemService {
 
         List<Booking> bookings = bookingRepository.findPastByBookerId(userId, now);
         Set<Long> itemIds = new HashSet<>();
-        for (Booking booking: bookings){
+        for (Booking booking: bookings) {
             itemIds.add(booking.getItemId());
         }
 
-        for (Long i: itemIds){
-            if(i.equals(comment.getItem().getId()) && comment.getItem().isAvailable()) {
+        for (Long i: itemIds) {
+            if (i.equals(comment.getItem().getId()) && comment.getItem().isAvailable()) {
                 throw new IllegalArgumentException(
                         "Пользователь не арендовал вещь или аренда ещё не завершена");
             }
