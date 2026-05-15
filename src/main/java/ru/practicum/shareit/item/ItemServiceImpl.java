@@ -225,7 +225,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> findAllByIds(Set<Long> ids){
+    public List<ItemDto> findAllByIds(Set<Long> ids) {
         return  repository.findAllById(ids).stream().map(ItemMapper::mapToItemDto).toList();
     }
 }

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

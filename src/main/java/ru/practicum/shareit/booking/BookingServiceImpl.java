@@ -116,7 +116,8 @@ public class BookingServiceImpl implements BookingService {
 
         Set<Long> itemIds = new HashSet<>();
         Set<Long> userIds = new HashSet<>();
-        for(Booking b: bookings){
+
+        for (Booking b: bookings) {
             itemIds.add(b.getItemId());
             userIds.add(b.getBookerId());
         }
