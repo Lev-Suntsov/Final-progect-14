@@ -20,6 +20,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto saveUser(UserDto user) {
+        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+            throw new IllegalArgumentException("Некорректный email");
+        }
+
         return UserMapper.mapToUserDto(repository.save(UserMapper.mapToUser(user)));
     }
 
