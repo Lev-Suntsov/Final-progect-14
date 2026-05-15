@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.Exeption.NotFoundException;
+import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -188,14 +189,13 @@ public class ItemServiceImpl implements ItemService {
         UserDto userDto = userService.findUserById(userId);
 
         Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-        Timestamp border = Timestamp.valueOf(now.toLocalDateTime().plusSeconds(5));
 
         boolean hasBooking = bookingRepository
                 .existsByItemIdAndBookerIdAndStatusAndEndBefore(
                         itemId,
                         userId,
                         BookingStatus.APPROVED,
-                        border
+                        now
                 );
 
         if (!hasBooking) {
