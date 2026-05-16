@@ -173,9 +173,11 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public CommentDto addComment(Long userId, Long itemId, CommentDto commentDto) {
+        if(itemId == null) {
+            throw new IllegalArgumentException("id не может быть пустым");
+        }
         Item item = repository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
-
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
@@ -192,6 +194,7 @@ public class ItemServiceImpl implements ItemService {
             throw new IllegalArgumentException("User has no finished booking for this item"); // вернётся 400
         }
 
+        item.setId(itemId);
         Comment savedComment = commentRepository.save(new Comment(
                 null,
                 commentDto.getText(),
