@@ -105,13 +105,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             """)
     List<Booking> findOwnerBookingsByStatus(Long userId, BookingStatus status);
 
-    boolean existsByItemIdAndBookerIdAndStatusAndEndBefore(
-            Long itemId,
-            Long bookerId,
-            BookingStatus status,
-            Timestamp now
-    );
-
     Optional<Booking> findFirstByItemIdAndStartBeforeOrderByStartDesc(
             Long itemId,
             Timestamp now
@@ -141,4 +134,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         order by b.start desc
         """)
     List<Booking> findRejectedOwnerBookings(@Param("userId") Long userId);
+
+    boolean existsByItemIdAndBookerIdAndStatusAndEndBefore(
+            Long itemId,
+            Long bookerId,
+            BookingStatus status,
+            Timestamp now
+    );
 }

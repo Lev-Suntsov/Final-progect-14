@@ -9,11 +9,10 @@ import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
-import ru.practicum.shareit.user.UserDto;
-import ru.practicum.shareit.user.UserMapper;
-import ru.practicum.shareit.user.UserServiceImpl;
+import ru.practicum.shareit.user.*;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,6 +25,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserServiceImpl userService;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -174,50 +174,46 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public ItemDto addComment(Long userId, Long itemId, CommentDto comment) {
-        if (itemId == null) {
-            throw new IllegalArgumentException("id вещи не может быть пустым");
-        }
-        if (userId == null) {
-            throw new IllegalArgumentException("id пользователя не может быть пустым");
-        }
-
+    public CommentDto addComment(Long userId, Long itemId, CommentDto commentDto) {
         Item item = repository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
 
-        UserDto userDto = userService.findUserById(userId);
+        User author = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
         Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 
-        List<Booking> bookings = bookingRepository.findPastByBookerId(userId, now);
-        Set<Long> itemIds = new HashSet<>();
-        for (Booking booking: bookings) {
-            itemIds.add(booking.getItemId());
+        boolean hasFinishedBooking = bookingRepository.existsByItemIdAndBookerIdAndStatusAndEndBefore(
+                itemId,
+                userId,
+                BookingStatus.APPROVED,
+                now
+        );
+
+        if (!hasFinishedBooking) {
+            throw new IllegalArgumentException("User has no finished booking for this item"); // вернётся 400
         }
 
-        for (Long i: itemIds) {
-            if (i.equals(comment.getItem().getId()) && comment.getItem().isAvailable()) {
-                throw new IllegalArgumentException(
-                        "Пользователь не арендовал вещь или аренда ещё не завершена");
-            }
-        }
+        Comment savedComment = commentRepository.save(new Comment(
+                null,
+                commentDto.getText(),
+                item,
+                author,
+                now
+        ));
 
-
-        comment.setItem(item);
-        comment.setAuthor(UserMapper.mapToUser(userDto));
-        comment.setCreated(now);
-        return ItemMapper.mapToItemDto(item);
+        return CommentMapper.toDto(savedComment);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentDto> getItemById(Long userId, Long itemId) {
+    public List<ItemDto> getItemById(Long userId, Long itemId) {
         Item item = repository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
 
-        return commentRepository.findAllByItem_IdOrderByCreatedDesc(itemId)
+        return repository.findById(itemId)
                 .stream()
-                .map(CommentMapper::toDto)
+                .map(ItemMapper::mapToItemDto)
                 .toList();
     }
 
