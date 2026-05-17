@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
         userService.findUserById(userId);
         itemDto.setUserId(userId);
 
-        Item item = ItemMapper.mapToItem(itemDto);
+        Item item = ItemMapper.mapToItem(itemDto, userService.findUserById(userId));
         return ItemMapper.mapToItemDto(repository.save(item));
     }
 
@@ -173,9 +173,11 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public CommentDto addComment(Long userId, Long itemId, CommentDto commentDto) {
-        if(itemId == null) {
+
+        if (itemId == null) {
             throw new IllegalArgumentException("id не может быть пустым");
         }
+
         Item item = repository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
         User author = userRepository.findById(userId)
@@ -202,6 +204,7 @@ public class ItemServiceImpl implements ItemService {
                 author,
                 now
         ));
+        item.getComments().add(savedComment);
 
         return CommentMapper.toDto(savedComment);
     }
