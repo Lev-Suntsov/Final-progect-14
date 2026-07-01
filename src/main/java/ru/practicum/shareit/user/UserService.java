@@ -12,4 +12,6 @@ interface UserService {
     UserDto findUserById(Long userId);
 
     void deleteUser(Long userId);
+
+    List<UserDto> findAllById(List<Long> ids);
 }

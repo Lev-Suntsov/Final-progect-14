@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> get(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getItems(userId);
+        return itemService.getAllItemsByOwner(userId);
     }
 
     @PostMapping
@@ -39,12 +40,20 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto findById(@PathVariable(name = "itemId") long itemId) {
-        return itemService.getItem(itemId);
+    public ItemDto findById(@PathVariable(name = "itemId") long itemId,
+                            @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.getItem(itemId, userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam("text") String text) {
         return itemService.search(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                 @PathVariable Long itemId,
+                                 @Valid @RequestBody CommentDto commentDto) {
+        return itemService.addComment(userId, itemId, commentDto);
     }
 }

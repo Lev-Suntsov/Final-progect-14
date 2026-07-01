@@ -2,37 +2,61 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.Exception.NotFoundException;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @Override
     public List<UserDto> getAllUsers() {
-        return repository.findAll();
+        return repository.findAll().stream().map(UserMapper::mapToUserDto).toList();
     }
 
     @Override
+    @Transactional
     public UserDto saveUser(UserDto user) {
-        return repository.save(user);
+        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+            throw new IllegalArgumentException("Некорректный email");
+        }
+
+        return UserMapper.mapToUserDto(repository.save(UserMapper.mapToUser(user)));
     }
 
     @Override
-    public UserDto updateUser(Long userId, UserDto user) {
-        return repository.updateUser(userId, user);
+    @Transactional
+    public UserDto updateUser(Long userId, UserDto userDto) {
+        User existingUser = repository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        if (userDto.getName() != null) {
+            existingUser.setName(userDto.getName());
+        }
+        if (userDto.getEmail() != null) {
+            existingUser.setEmail(userDto.getEmail());
+        }
+
+        User updatedUser = repository.save(existingUser);
+        return UserMapper.mapToUserDto(updatedUser);
     }
 
     @Override
     public UserDto findUserById(Long userId) {
-        return repository.findUserById(userId);
+        User user = repository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        return UserMapper.mapToUserDto(user);
     }
 
     @Override
     public void deleteUser(Long userId) {
-        repository.deleteUser(userId);
+        repository.delete(repository.findUserById(userId));
     }
 
+    @Override
+    public List<UserDto> findAllById(List<Long> ids) {
+        return repository.findAllById(ids).stream().map(UserMapper::mapToUserDto).toList();
+    }
 }

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.Exeption;
+package ru.practicum.shareit.Exception;
 
 public class DublicateException extends RuntimeException {
     public DublicateException(String message) {
